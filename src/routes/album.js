@@ -7,7 +7,7 @@ const {
   increaseLikes,
   increaseDownloads,
   createAlbumFromFolder,
-} = require("../Controllers/AlbumContoller");
+} = require("../controllers/AlbumContoller");
 
 // Route to get all albums
 router.get("/getall", GetAlAlbums);
