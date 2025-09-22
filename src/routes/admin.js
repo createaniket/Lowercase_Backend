@@ -11,7 +11,7 @@ router.post("/signup", async (req, res) => {
     const token = await admin.generateAuthToken();
     const savedAdmin = await admin.save();
 
-    res.status(201).json({ token, admin: savedAdmin, wallet });
+    res.status(201).json({ token, admin: savedAdmin });
   } catch (error) {
     res.status(500).send(error.message);
   }
