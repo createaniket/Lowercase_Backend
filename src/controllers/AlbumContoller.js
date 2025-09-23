@@ -232,4 +232,37 @@ const updateAlbum = async (req, res) => {
 };
 
 
-module.exports = {GetAlAlbums, GetAlAlbumById, increaseLikes, increaseDownloads, createAlbumFromFolder, updateAlbum};
+
+// ✅ Delete album
+const deleteAlbum = async (req, res) => {
+  try {
+    const { albumId } = req.params;
+
+    // Find album
+    const album = await Album.findById(albumId);
+    if (!album) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    // (Optional) Delete all files from the GCS folder
+    // ⚠️ Uncomment if you want to actually remove files from GCS too
+    /*
+    if (album.folderName) {
+      await bucket.deleteFiles({ prefix: `${album.folderName}/` });
+      console.log(`Deleted all files from folder: ${album.folderName}`);
+    }
+    */
+
+    // Delete album from MongoDB
+    await Album.findByIdAndDelete(albumId);
+
+    res.status(200).json({ message: "Album deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting album:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+module.exports = {GetAlAlbums, GetAlAlbumById, increaseLikes, increaseDownloads, createAlbumFromFolder, updateAlbum, deleteAlbum};
