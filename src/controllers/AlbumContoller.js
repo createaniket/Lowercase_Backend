@@ -178,7 +178,9 @@ const createAlbumFromFolder = async (req, res) => {
 // ✅ Update album
 const updateAlbum = async (req, res) => {
   try {
-    const { albumId } = req.params;
+
+    const albumId  = req.params.id;
+
     const { title, club, venue, date, eventName, tags, coverPhoto, folderName } = req.body;
 
     // Find album first
@@ -236,7 +238,7 @@ const updateAlbum = async (req, res) => {
 // ✅ Delete album
 const deleteAlbum = async (req, res) => {
   try {
-    const { albumId } = req.params;
+    const albumId  = req.params.id;
 
     // Find album
     const album = await Album.findById(albumId);
