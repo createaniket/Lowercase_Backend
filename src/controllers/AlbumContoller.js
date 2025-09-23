@@ -174,4 +174,62 @@ const createAlbumFromFolder = async (req, res) => {
 };
 
 
-module.exports = {GetAlAlbums, GetAlAlbumById, increaseLikes, increaseDownloads, createAlbumFromFolder};
+
+// ✅ Update album
+const updateAlbum = async (req, res) => {
+  try {
+    const { albumId } = req.params;
+    const { title, club, venue, date, eventName, tags, coverPhoto, folderName } = req.body;
+
+    // Find album first
+    const album = await Album.findById(albumId);
+    if (!album) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    // Update fields if provided
+    if (title) album.title = title;
+    if (club) album.club = club;
+    if (venue) album.venue = venue;
+    if (date) album.date = date;
+    if (eventName) album.eventName = eventName;
+    if (tags) album.tags = tags;
+    if (coverPhoto) album.coverPhoto = coverPhoto;
+
+    // If folderName is provided, refresh files from GCS
+    if (folderName) {
+      album.folderName = folderName;
+
+      const [files] = await bucket.getFiles({ prefix: `${folderName}/` });
+
+      if (!files.length) {
+        return res.status(404).json({ message: "No files found in this folder" });
+      }
+
+      const photos = files.map((file) => ({
+        url: `https://storage.googleapis.com/${bucket.name}/${file.name}`,
+        gcsPath: `gs://${bucket.name}/${file.name}`,
+      }));
+
+      album.photos = photos;
+
+      // Update cover photo if not explicitly given
+      if (!coverPhoto) {
+        album.coverPhoto = photos[0]?.url;
+      }
+    }
+
+    await album.save();
+
+    res.status(200).json({
+      message: "Album updated successfully",
+      album,
+    });
+  } catch (error) {
+    console.error("Error updating album:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+module.exports = {GetAlAlbums, GetAlAlbumById, increaseLikes, increaseDownloads, createAlbumFromFolder, updateAlbum};

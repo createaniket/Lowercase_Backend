@@ -7,6 +7,8 @@ const {
   increaseLikes,
   increaseDownloads,
   createAlbumFromFolder,
+  updateAlbum,
+  deleteAlbum
 } = require("../controllers/AlbumContoller");
 
 // Route to get all albums
@@ -24,5 +26,7 @@ router.patch(
 );
 
 router.post("/create-from-folder", createAlbumFromFolder);
+router.patch("/update/:id", updateAlbum);
+router.delete("/delete/:id", deleteAlbum);
 
 module.exports = router;
