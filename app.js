@@ -18,6 +18,7 @@ const User = require("./src/routes/user")
 
 const Admin = require("./src/routes/admin")
 
+const Form = require("./src/routes/form")
 
 
 
@@ -55,6 +56,7 @@ db.on("disconnected", () => {
 app.use('/api/album', Albums);
 app.use('/api/user', User)
 app.use('/api/admin', Admin)
+app.use('/api/form', Form)
 
 
 
