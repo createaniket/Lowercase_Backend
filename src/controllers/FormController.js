@@ -36,7 +36,9 @@ exports.submitForm = async (req, res) => {
     // await sendToGoogleSheet(submission);
 
     // WhatsApp
-    await sendWhatsApp(submission);
+ const whastappResilt =    await sendWhatsApp(submission);
+
+ console.log("WhatsApp Result:", whastappResilt);
 
     res.status(201).json({
       success: true,
