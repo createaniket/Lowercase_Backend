@@ -6,9 +6,10 @@ exports.sendWhatsApp = async (submission) => {
 
     const message = await client.messages.create({
 
-      from: "whatsapp:+447360495222",
+      from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`,
       to: `whatsapp:${process.env.ADMIN_WHATSAPP}`,
 
+      
       // ✅ Your approved template SID
       contentSid: process.env.CONTENTTWILIOID, // <-- replace with real SID
 
