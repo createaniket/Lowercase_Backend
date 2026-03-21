@@ -1,21 +1,20 @@
-// routes/groupRoutes.js
-
-import express from "express";
-import {
+const express = require("express");
+const {
   getGroups,
   getGroupBySlug,
   createGroup,
-} from "../controllers/groupController.js";
+  uploadGroupsFile
+} = require("../controllers/GroupchatController");
+
+const upload = require("../middlewares/upload");
+
+
 
 const router = express.Router();
 
-// 🔍 Filters + Search + Pagination
 router.get("/", getGroups);
-
-// 📄 Single group
 router.get("/:slug", getGroupBySlug);
-
-// ➕ Create
 router.post("/", createGroup);
+router.post("/upload-csv", upload.single("file"), uploadGroupsFile);
 
-export default router;
+module.exports = router;

@@ -20,6 +20,8 @@ const Admin = require("./src/routes/admin")
 
 const Form = require("./src/routes/form")
 
+const GroupChats = require("./src/routes/groupchat")
+
 
 
 
@@ -57,6 +59,7 @@ app.use('/api/album', Albums);
 app.use('/api/user', User)
 app.use('/api/admin', Admin)
 app.use('/api/form', Form)
+app.use('/api/groupchats', GroupChats)
 
 
 
