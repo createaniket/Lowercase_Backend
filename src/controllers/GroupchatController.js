@@ -109,45 +109,102 @@ const uploadGroupsFile = async (req, res) => {
   }
 };
 
-// ================= GET =================
-const getGroups = async (req, res) => {
+// // ================= GET =================
+// const getGroups = async (req, res) => {
+//   try {
+//     const {
+//       city,
+//       university,
+//       subject,
+//       courseLevel,
+//       accommodationType,
+//       search,
+//     } = req.query;
+
+//     let filter = {};
+
+//     if (city) filter.city = city.toLowerCase();
+//     if (university) filter.university = university;
+//     if (subject) filter.subject = subject;
+
+//     if (courseLevel) {
+//       filter.courseLevels = { $in: [courseLevel] };
+//     }
+
+//     if (accommodationType) {
+//       filter.accommodationTypes = { $in: [accommodationType] };
+//     }
+
+//     if (search) {
+//       filter.$text = { $search: search };
+//     }
+
+//     // const data = await GroupChat.find(filter).limit(50);
+
+//     const data = await GroupChat.find(filter);
+
+
+//     res.json({ success: true, data });
+
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
+exports.getGroups = async (req, res) => {
   try {
     const {
+      search = "",
+      page = 1,
+      limit = 25,
       city,
-      university,
       subject,
-      courseLevel,
-      accommodationType,
-      search,
+      university,
     } = req.query;
 
-    let filter = {};
+    const query = {};
 
-    if (city) filter.city = city.toLowerCase();
-    if (university) filter.university = university;
-    if (subject) filter.subject = subject;
-
-    if (courseLevel) {
-      filter.courseLevels = { $in: [courseLevel] };
-    }
-
-    if (accommodationType) {
-      filter.accommodationTypes = { $in: [accommodationType] };
-    }
-
+    // 🔍 SEARCH (multi-field)
     if (search) {
-      filter.$text = { $search: search };
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { city: { $regex: search, $options: "i" } },
+        { university: { $regex: search, $options: "i" } },
+        { subject: { $regex: search, $options: "i" } },
+        { displayLineMain: { $regex: search, $options: "i" } },
+        { groupTypeDescription: { $regex: search, $options: "i" } },
+      ];
     }
 
-    // const data = await GroupChat.find(filter).limit(50);
+    // 🎯 FILTERS (optional)
+    if (city) query.city = city;
+    if (subject) query.subject = subject;
+    if (university) query.university = university;
 
-    const data = await GroupChat.find(filter);
+    const skip = (page - 1) * limit;
 
+    const [groups, total] = await Promise.all([
+      GroupChat.find(query)
+        .skip(skip)
+        .limit(Number(limit))
+        .sort({ createdAt: -1 }),
 
-    res.json({ success: true, data });
+      GroupChat.countDocuments(query),
+    ]);
 
+    res.json({
+      success: true,
+      data: groups,
+      pagination: {
+        total,
+        page: Number(page),
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ success: false });
   }
 };
 
