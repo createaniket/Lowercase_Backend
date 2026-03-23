@@ -152,7 +152,7 @@ const uploadGroupsFile = async (req, res) => {
 // };
 
 
-exports.getGroups = async (req, res) => {
+const getGroups = async (req, res) => {
   try {
     const {
       search = "",
