@@ -209,6 +209,21 @@ const getGroups = async (req, res) => {
 };
 
 
+const GetFilters = async (req, res) => {
+  try {
+    const universities = await GroupChat.distinct("university");
+    const subjects = await GroupChat.distinct("subject");
+
+    res.json({
+      success: true,
+      universities,
+      subjects,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+};
+
 
 
 
@@ -290,6 +305,7 @@ const RemoveTextTags = async (req, res) => {
 module.exports = {
   uploadGroupsFile,
   getGroups,
+  GetFilters,
   FixExistingCapitalization,
   RemoveTextTags
 };
