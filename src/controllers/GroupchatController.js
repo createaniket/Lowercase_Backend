@@ -166,7 +166,7 @@ const getGroups = async (req, res) => {
     const query = {};
 
     // 🔍 SEARCH (multi-field)
-    if (search) {
+    if (search && search.trim() !== "") {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
         { city: { $regex: search, $options: "i" } },
