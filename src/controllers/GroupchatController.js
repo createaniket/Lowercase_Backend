@@ -191,9 +191,45 @@ const FixExistingCapitalization = async (req, res) => {
   }
 };
 
+const RemoveTextTags = async (req, res) => {
+  try {
+    // 🔥 sirf [text=...] remove karega
+    const cleanText = (str) => {
+      if (!str) return str;
+      return str.replace(/\[text=.*?\]/gi, "").trim();
+    };
+
+    const groups = await GroupChat.find();
+
+    const bulkOps = groups.map(group => ({
+      updateOne: {
+        filter: { _id: group._id },
+        update: {
+          $set: {
+            groupTypeDescription: cleanText(group.groupTypeDescription),
+            displayLineThird: cleanText(group.displayLineThird),
+          },
+        },
+      },
+    }));
+
+    await GroupChat.bulkWrite(bulkOps);
+
+    res.json({
+      success: true,
+      message: "✅ Text tags removed successfully",
+      total: groups.length,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error removing text tags" });
+  }
+};
+
 
 module.exports = {
   uploadGroupsFile,
   getGroups,
-  FixExistingCapitalization
+  FixExistingCapitalization,
+  RemoveTextTags
 };

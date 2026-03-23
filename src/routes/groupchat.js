@@ -4,7 +4,8 @@ const {
   // getGroupBySlug,
   // createGroup,
   uploadGroupsFile,
-  FixExistingCapitalization
+  FixExistingCapitalization,
+  RemoveTextTags
 } = require("../controllers/GroupchatController");
 
 const upload = require("../middlewares/upload");
@@ -19,5 +20,7 @@ router.get("/", getGroups);
 router.post("/upload-csv", upload.single("file"), uploadGroupsFile);
 
 router.get("/fix-existing-data", FixExistingCapitalization);
+
+router.get("/remove-text-tags", RemoveTextTags);
 
 module.exports = router;
