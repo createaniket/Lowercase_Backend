@@ -1,11 +1,22 @@
 const mongoose = require("mongoose");
 
+// 🔥 Helper function (TOP par hona chahiye)
+function capitalizeWords(val) {
+  if (!val) return val;
+  return val
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 const groupSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
       trim: true,
+      set: capitalizeWords, // optional but recommended
     },
 
     slug: {
@@ -19,18 +30,20 @@ const groupSchema = new mongoose.Schema(
 
     city: {
       type: String,
-      lowercase: true,
       trim: true,
+      set: capitalizeWords,
     },
 
     university: {
       type: String,
       trim: true,
+      set: capitalizeWords,
     },
 
     subject: {
       type: String,
       trim: true,
+      set: capitalizeWords,
     },
 
     // 🔥 New Fields
@@ -67,7 +80,6 @@ const groupSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
 // ✅ INDEXES
 groupSchema.index({ city: 1 });
 groupSchema.index({ university: 1 });
@@ -86,7 +98,6 @@ groupSchema.index({
   subject: "text",
 });
 
-
 // 🔥 SLUG
 groupSchema.pre("save", function (next) {
   if (!this.slug && this.name) {
@@ -95,8 +106,7 @@ groupSchema.pre("save", function (next) {
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
 
-    this.slug =
-      baseSlug + "-" + Math.floor(Math.random() * 10000);
+    this.slug = baseSlug + "-" + Math.floor(Math.random() * 10000);
   }
   next();
 });

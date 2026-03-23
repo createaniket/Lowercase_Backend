@@ -148,7 +148,52 @@ const getGroups = async (req, res) => {
   }
 };
 
+
+
+
+
+const FixExistingCapitalization = async (req, res) => {
+  try {
+    const capitalizeWords = (str) => {
+      if (!str) return str;
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ");
+    };
+
+    const groups = await GroupChat.find();
+
+    const bulkOps = groups.map(group => ({
+      updateOne: {
+        filter: { _id: group._id },
+        update: {
+          $set: {
+            city: capitalizeWords(group.city),
+            university: capitalizeWords(group.university),
+            subject: capitalizeWords(group.subject),
+          },
+        },
+      },
+    }));
+
+    await GroupChat.bulkWrite(bulkOps);
+
+    res.json({
+      success: true,
+      message: "✅ Existing data fixed successfully",
+      total: groups.length,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error fixing data" });
+  }
+};
+
+
 module.exports = {
   uploadGroupsFile,
   getGroups,
+  FixExistingCapitalization
 };
