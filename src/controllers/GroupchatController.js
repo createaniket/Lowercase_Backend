@@ -139,7 +139,10 @@ const getGroups = async (req, res) => {
       filter.$text = { $search: search };
     }
 
-    const data = await GroupChat.find(filter).limit(50);
+    // const data = await GroupChat.find(filter).limit(50);
+
+    const data = await GroupChat.find(filter);
+
 
     res.json({ success: true, data });
 
