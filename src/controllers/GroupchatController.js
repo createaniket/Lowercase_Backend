@@ -224,7 +224,35 @@ const GetFilters = async (req, res) => {
   }
 };
 
+// controllers/groupController.js
 
+const GetGroupCountsByUniversity = async (req, res) => {
+  try {
+    const data = await GroupChat.aggregate([
+      {
+        $group: {
+          _id: "$university",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          university: "$_id",
+          count: 1,
+          _id: 0
+        }
+      }
+    ]);
+
+    res.json({
+      success: true,
+      data
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+};
 
 
 const FixExistingCapitalization = async (req, res) => {
@@ -305,6 +333,7 @@ const RemoveTextTags = async (req, res) => {
 module.exports = {
   uploadGroupsFile,
   getGroups,
+  GetGroupCountsByUniversity,
   GetFilters,
   FixExistingCapitalization,
   RemoveTextTags
