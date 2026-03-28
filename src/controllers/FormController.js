@@ -73,3 +73,61 @@ exports.getAllForms = async (req, res) => {
     });
   }
 };
+
+
+
+exports.submitWordPressForm = async (req, res) => {
+  try {
+    const { formType } = req.params;
+
+    // WordPress (CF7) fields
+    const name = req.body['your-name'];
+    const email = req.body['your-email'];
+    const phone = req.body['your-phone'];
+    const message = req.body['your-message'];
+
+    // Full raw data (future use)
+    const data = req.body;
+
+    // Validation
+    if (!name || !email || !phone || !formType) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields (WP)",
+      });
+    }
+
+    // Save in DB
+    const submission = await FormSubmission.create({
+      name,
+      email,
+      phone,
+      message,
+      formType,
+      source: "wordpress", // 👈 important
+      data
+    });
+
+    // WhatsApp
+    const whatsappResult = await sendWhatsApp({
+      ...submission.toObject(),
+      source: "wordpress"
+    });
+
+    console.log("WP WhatsApp Result:", whatsappResult);
+
+    res.status(201).json({
+      success: true,
+      message: "WordPress form submitted successfully",
+      id: submission._id,
+    });
+
+  } catch (err) {
+    console.error("WP Form Error:", err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
