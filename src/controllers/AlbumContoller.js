@@ -267,4 +267,64 @@ const deleteAlbum = async (req, res) => {
 
 
 
-module.exports = {GetAlAlbums, GetAlAlbumById, increaseLikes, increaseDownloads, createAlbumFromFolder, updateAlbum, deleteAlbum};
+// Utility: random number generator
+const getRandomLikes = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const UpdateRandomLikes = async (req, res) => {
+  try {
+    const { minLikes, maxLikes } = req.body;
+
+    // Validation
+    if (
+      typeof minLikes !== "number" ||
+      typeof maxLikes !== "number" ||
+      minLikes < 0 ||
+      maxLikes < minLikes
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid minLikes or maxLikes",
+      });
+    }
+
+    // Get all albums
+    const albums = await Album.find();
+
+    let totalPhotosUpdated = 0;
+
+    // Loop through albums
+    for (let album of albums) {
+      let updated = false;
+
+      // Loop through photos
+      album.photos.forEach((photo) => {
+        const randomLikes = getRandomLikes(minLikes, maxLikes);
+        photo.likes = randomLikes;
+        totalPhotosUpdated++;
+        updated = true;
+      });
+
+      // Save only if updated
+      if (updated) {
+        await album.save();
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Random likes updated successfully",
+      totalPhotosUpdated,
+    });
+  } catch (error) {
+    console.error("Error updating likes:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
+module.exports = {GetAlAlbums, GetAlAlbumById, increaseLikes, increaseDownloads, createAlbumFromFolder, updateAlbum, deleteAlbum, UpdateRandomLikes};

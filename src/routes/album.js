@@ -8,7 +8,8 @@ const {
   increaseDownloads,
   createAlbumFromFolder,
   updateAlbum,
-  deleteAlbum
+  deleteAlbum,
+  UpdateRandomLikes
 } = require("../controllers/AlbumContoller");
 
 // Route to get all albums
@@ -28,5 +29,7 @@ router.patch(
 router.post("/create-from-folder", createAlbumFromFolder);
 router.patch("/update/:id", updateAlbum);
 router.delete("/delete/:id", deleteAlbum);
+
+router.post("/update-random-likes", UpdateRandomLikes);
 
 module.exports = router;
