@@ -78,15 +78,23 @@ exports.getAllForms = async (req, res) => {
 
 exports.submitWordPressForm = async (req, res) => {
   try {
+
+    // 🔐 STEP 3: Security check (yahin likhna hai)
+    if (req.headers['x-api-key'] !== process.env.WP_API_KEY) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
     const { formType } = req.params;
 
-    // WordPress (CF7) fields
+    // WordPress fields
     const name = req.body['your-name'];
     const email = req.body['your-email'];
     const phone = req.body['your-phone'];
     const message = req.body['your-message'];
 
-    // Full raw data (future use)
     const data = req.body;
 
     // Validation
@@ -104,15 +112,12 @@ exports.submitWordPressForm = async (req, res) => {
       phone,
       message,
       formType,
-      source: "wordpress", // 👈 important
+      source: "wordpress",
       data
     });
 
     // WhatsApp
-    const whatsappResult = await sendWhatsApp({
-      ...submission.toObject(),
-      source: "wordpress"
-    });
+    const whatsappResult = await sendWhatsApp(submission);
 
     console.log("WP WhatsApp Result:", whatsappResult);
 
