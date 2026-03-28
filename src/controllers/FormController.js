@@ -79,6 +79,9 @@ exports.getAllForms = async (req, res) => {
 exports.submitWordPressForm = async (req, res) => {
   try {
 
+    console.log("WP Form Data:", req.body);
+    console.log("WP Form Headers:", req.headers);
+
     // 🔐 STEP 3: Security check (yahin likhna hai)
     if (req.headers['x-api-key'] !== process.env.WP_API_KEY) {
       return res.status(403).json({
