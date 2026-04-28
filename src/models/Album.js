@@ -20,6 +20,7 @@ const albumSchema = new mongoose.Schema(
         gcsPath: { type: String },               // gs://bucket/folder/file.jpg
         likes: { type: Number, default: 0 },
         downloads: { type: Number, default: 0 },
+        status: { type: String, enum: ["enabled", "disabled"], default: "enabled" },
         uploadedAt: { type: Date, default: Date.now },
       },
     ],
