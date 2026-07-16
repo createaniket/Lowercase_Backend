@@ -1,0 +1,23 @@
+// No change needed to app.js for albums — the route is already mounted:
+//
+//     const Albums = require("./src/routes/album");
+//     app.use('/api/album', Albums);
+//
+// Just make sure you have a decent JSON/body limit for the metadata
+// (photos go through multipart, so express.json limit doesn't affect them):
+
+app.use(express.json({ limit: "2mb" }));
+
+// Optional: a multer error handler so oversized/invalid uploads return clean JSON.
+// Add this AFTER all app.use(route) lines, BEFORE app.listen():
+
+app.use((err, req, res, next) => {
+  if (err && err.name === "MulterError") {
+    return res.status(400).json({ message: `Upload error: ${err.message}` });
+  }
+  if (err && err.message === "Only image files are allowed") {
+    return res.status(400).json({ message: err.message });
+  }
+  console.error(err);
+  return res.status(500).json({ message: "Server error" });
+});

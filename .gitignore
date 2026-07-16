@@ -1,0 +1,5 @@
+.env
+node_modules
+gcs-key.json
+uploads
+Public
