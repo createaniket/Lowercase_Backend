@@ -5,7 +5,6 @@ var cors = require('cors')
 const app = express();
 // Allow all origins (credentials-safe)
 app.use(cors({ origin: true, credentials: true }));
-app.options("*", cors({ origin: true, credentials: true }));  // preflight
 
 app.use(express.json());
 require("dotenv").config();
