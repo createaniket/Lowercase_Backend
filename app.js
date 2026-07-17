@@ -3,14 +3,9 @@ const mongoose = require("mongoose");
 const path = require("path");
 var cors = require('cors')
 const app = express();
-app.use(cors({
-  origin: [
-    "http://localhost:5173",            // admin panel (dev)
-    "https://lowercaseevents.com",       // main site
-    "https://www.lowercaseevents.com",
-  ],
-  credentials: true,
-}));
+// Allow all origins (credentials-safe)
+app.use(cors({ origin: true, credentials: true }));
+app.options("*", cors({ origin: true, credentials: true }));  // preflight
 
 app.use(express.json());
 require("dotenv").config();
